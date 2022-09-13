@@ -7,14 +7,14 @@ const loadPhones = async (searchText, dataLimit) => {
 
 const displayPhones = (phones, dataLimit) => {
   const phonesContainer = document.getElementById("phones-container");
-  // phonesContainer.textContent = '';
+  phonesContainer.textContent = "";
   // display 10 phones only
   const showAll = document.getElementById("show-all");
   if (dataLimit && phones.length > 10) {
     phones = phones.slice(0, 10);
     showAll.classList.remove("d-none");
   } else {
-    showAll.classList.add("d-hidden");
+    showAll.classList.add("d-none");
   }
 
   // display no phones found
@@ -26,7 +26,6 @@ const displayPhones = (phones, dataLimit) => {
   }
   // display all phones
   phones.forEach((phone) => {
-    console.log(phone);
     const phoneDiv = document.createElement("div");
     phoneDiv.classList.add("col");
     phoneDiv.innerHTML = `
@@ -45,11 +44,20 @@ const displayPhones = (phones, dataLimit) => {
   // stop spinner or loader
   toggleSpinner(false);
 };
-
+let initialModel = "iphone";
 const processSearch = (dataLimit) => {
   toggleSpinner(true);
   const searchField = document.getElementById("search-field");
+
   const searchText = searchField.value;
+
+  if (!searchText) {
+    alert("Please Input your Phone name");
+    toggleSpinner(false);
+
+    return;
+  }
+  initialModel = searchText;
   loadPhones(searchText, dataLimit);
   searchField.value = "";
 };
@@ -64,13 +72,14 @@ document.getElementById("btn-search").addEventListener("click", function () {
 document
   .getElementById("search-field")
   .addEventListener("keypress", function (e) {
-    if (e.key === "enter") {
+    if (e.key === "Enter") {
       processSearch(10);
     }
   });
 
 const toggleSpinner = (isLoading) => {
   const loaderSection = document.getElementById("loader");
+
   if (!isLoading) {
     loaderSection.classList.add("d-none");
   } else {
@@ -80,25 +89,25 @@ const toggleSpinner = (isLoading) => {
 
 // not the best way to load show All
 document.getElementById("btn-show-all").addEventListener("click", function () {
-  processSearch();
+  loadPhones(initialModel);
 });
 
 const loadPhoneDetails = async (id) => {
-  const url = `www.openapi.programming-hero.com/api/phone/${id}`;
+  const url = `https://openapi.programming-hero.com/api/phone/${id}`;
   const res = await fetch(url);
   const data = await res.json();
   displayPhoneDetails(data.data);
 };
 
 const displayPhoneDetails = (phone) => {
-  console.log(phone);
   const modalTitle = document.getElementById("phoneDetailModalLabel");
+  console.log(phone.mainFeatures);
   modalTitle.innerText = phone.name;
   const phoneDetails = document.getElementById("phone-details");
   console.log(phone.mainFeatures.sensors[0]);
   phoneDetails.innerHTML = `
         <p>Release Date: ${phone.releaseDate}</p>
-        <p>Storage: ${phone.mainFeatures}</p>
+        <p>Storage: ${phone.mainFeatures.storage}</p>
         <p>Others: ${
           phone.others ? phone.others.Bluetooth : "No Bluetooth Information"
         }</p>
@@ -110,4 +119,4 @@ const displayPhoneDetails = (phone) => {
     `;
 };
 
-loadPhones("oppo");
+loadPhones(initialModel, 10);
