@@ -106,8 +106,14 @@ const displayPhoneDetails = (phone) => {
   const phoneDetails = document.getElementById("phone-details");
   console.log(phone.mainFeatures.sensors[0]);
   phoneDetails.innerHTML = `
-        <p>Release Date: ${phone.releaseDate}</p>
-        <p>Storage: ${phone.mainFeatures.storage}</p>
+        <p>Release Date: ${
+          phone.releaseDate ? phone.releaseDate : "No Data Available"
+        }</p>
+        <p>Storage: ${
+          phone.mainFeatures.storage
+            ? phone.mainFeatures.storage
+            : "No Data Available"
+        }</p>
         <p>Others: ${
           phone.others ? phone.others.Bluetooth : "No Bluetooth Information"
         }</p>
